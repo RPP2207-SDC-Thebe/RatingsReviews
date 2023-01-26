@@ -1,27 +1,49 @@
-// function sum(a, b) {
-//   return a + b;
-// }
-// module.exports = sum;
-
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
+const { connectToDb, getDb } = require('./db.js');
 
-mongoose.set('strictQuery', true);
-mongoose.connect('mongodb://localhost/sdc-reviews')
-
+// initialize & middleware
 var app = express();
-const db = mongoose.connection;
+
+// connect to db
+let db;
+
+connectToDb((err) => {
+  if (!err) {
+    app.listen(process.env.PORT, () => console.log(`Server on localhost:${process.env.PORT}`));
+    db = getDb()
+  }
+})
 
 app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
 
+async function getReview(reviewId) {
+  try {
+    const oneReview = await db.collection('Reviews').findOne( { id: reviewId } );
+  } catch (error) {
+    throw error;
+  }
+}
 
-app.listen(process.env.PORT, () => console.log(`Server on localhost ${process.env.PORT}`));
-db.once('open', () => console.log('Connection to Database Established!'));
+// ROUTES
 
+// GET Routes
+app.get('/', (req, res) => {
+  res.status(200).send('Welcome!')
+})
 
+app.get('/allReviews/:id', (req, res) => {
+  const reviewId = parseInt(req.params.id);
+  db.collection('Reviews')
+  .findOne( { id: reviewId } )
+  .then((result) => {
+    res.status(200).send(result);
+  })
+})
 
+// PUT/POST Routes
+
+// app.post('/reviews/userReview')
 
 /*
   Reviews = {
