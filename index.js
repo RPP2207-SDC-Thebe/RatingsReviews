@@ -17,55 +17,61 @@ connectToDb((err) => {
 
 app.use(express.json());
 
-async function getReview(reviewId) {
-  try {
-    const oneReview = await db.collection('Reviews').findOne( { id: reviewId } );
-  } catch (error) {
-    throw error;
-  }
-}
+// function getNextSequence() {
+//   var ret = db.collection('counters').findAndModify(
+//     {
+//       query: { _id: 'userid' },
+//       update: { $inc: { seq: 1 } },
+//       new: true
+//     }
+//   );
+//   return ret.seq;
+// }
 
 // ROUTES
 
 // GET Routes
-app.get('/', (req, res) => {
-  res.status(200).send('Welcome!')
-})
+// app.get('/', (req, res) => {
+//   res.status(200).send('Welcome!')
+// })
 
 app.get('/allReviews/:id', (req, res) => {
-  const reviewId = parseInt(req.params.id);
-  db.collection('Reviews')
-  .findOne( { id: reviewId } )
-  .then((result) => {
-    res.status(200).send(result);
-  })
+  const productId = parseInt(req.params.id);
+
+  db.collection('Reviews').find( { product_id: productId } )
+    .toArray(function(err, results) {
+      if (err) {
+        console.log(err)
+      }
+      res.status(200).send(results)
+    })
 })
 
 // PUT/POST Routes
 
-// app.post('/reviews/userReview')
-
-/*
-  Reviews = {
-    review_id: Number,
-    product_id: Number,
-    rating: Number,
-    summary: String,
-    recommend: Boolean,
-    body: String,
-    reviewer_name: String,
-    helpfulness: Number
-  }
-  Meta = {
-    product_id: Number,
-    recommended: Object,
-    ratings: Object,
-    characteristics: Object(
-      fit: String,
-      length: String,
-      comfort: String,
-      quality: String
-    )
-  }
-
-*/
+app.post('/reviews/userReview', (req, res) => {
+  console.log('this the req:', req.body)
+  var input = req.body;
+  // db.collection('Reviews').insert(
+  //   {
+  //     id: getNextSequence(),
+  //     reviewer_name: req.body.nickName,
+  //     reviewer_email: req.body.email,
+  //     rating: req.body.rating,
+  //     recommend: req.body.recommend,
+  //     body: req.body.reviewBody,
+  //     summary: req.body.reviewSummary
+  //   }
+  // )
+  /* write an insert query for the following data structure -- FINAL ID is 5774952
+  let currentData = {
+      characteristics: characteristics,
+      email: email,
+      nickName: nickname,
+      rating: overallRating,
+      recommend: recommend,
+      reviewBody: reviewBody,
+      reviewSummary: reviewSummary,
+      photos: photoList,
+  */
+})
