@@ -47,22 +47,34 @@ app.get('/allReviews/:id', (req, res) => {
     })
 })
 
+app.get('/reviews', (req, res) => {
+  const productId = parseInt(req.params.id);
+
+  db.collection('Reviews').find( { product_id: productId } )
+    .toArray(function(err, results) {
+      if (err) {
+        console.log(err)
+      }
+      res.status(200).send(results)
+    })
+})
+
 // PUT/POST Routes
 
 app.post('/reviews/userReview', (req, res) => {
   console.log('this the req:', req.body)
   var input = req.body;
-  // db.collection('Reviews').insert(
-  //   {
-  //     id: getNextSequence(),
-  //     reviewer_name: req.body.nickName,
-  //     reviewer_email: req.body.email,
-  //     rating: req.body.rating,
-  //     recommend: req.body.recommend,
-  //     body: req.body.reviewBody,
-  //     summary: req.body.reviewSummary
-  //   }
-  // )
+  db.collection('Reviews').insert(
+    {
+      id: getNextSequence(),
+      reviewer_name: req.body.nickName,
+      reviewer_email: req.body.email,
+      rating: req.body.rating,
+      recommend: req.body.recommend,
+      body: req.body.reviewBody,
+      summary: req.body.reviewSummary
+    }
+  )
   /* write an insert query for the following data structure -- FINAL ID is 5774952
   let currentData = {
       characteristics: characteristics,
