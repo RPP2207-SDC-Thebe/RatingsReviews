@@ -17,23 +17,23 @@ connectToDb((err) => {
 
 app.use(express.json());
 
-// function getNextSequence() {
-//   var ret = db.collection('counters').findAndModify(
-//     {
-//       query: { _id: 'userid' },
-//       update: { $inc: { seq: 1 } },
-//       new: true
-//     }
-//   );
-//   return ret.seq;
-// }
+function getNextSequence() {
+  var ret = db.collection('counters').findAndModify(
+    {
+      query: { _id: 'userid' },
+      update: { $inc: { seq: 1 } },
+      new: true
+    }
+  );
+  return ret.seq;
+}
 
 // ROUTES
 
 // GET Routes
-// app.get('/', (req, res) => {
-//   res.status(200).send('Welcome!')
-// })
+app.get('/', (req, res) => {
+  res.status(200).send('Welcome!')
+})
 
 app.get('/allReviews/:id', (req, res) => {
   const productId = parseInt(req.params.id);
@@ -47,17 +47,17 @@ app.get('/allReviews/:id', (req, res) => {
     })
 })
 
-app.get('/reviews', (req, res) => {
-  const productId = parseInt(req.params.id);
+// app.get('/reviews', (req, res) => {
+//   const productId = parseInt(req.params.id);
 
-  db.collection('Reviews').find( { product_id: productId } )
-    .toArray(function(err, results) {
-      if (err) {
-        console.log(err)
-      }
-      res.status(200).send(results)
-    })
-})
+//   db.collection('Reviews').find( { product_id: productId } )
+//     .toArray(function(err, results) {
+//       if (err) {
+//         console.log(err)
+//       }
+//       res.status(200).send(results)
+//     })
+// })
 
 // PUT/POST Routes
 
@@ -66,7 +66,6 @@ app.post('/reviews/userReview', (req, res) => {
   var input = req.body;
   db.collection('Reviews').insert(
     {
-      id: getNextSequence(),
       reviewer_name: req.body.nickName,
       reviewer_email: req.body.email,
       rating: req.body.rating,
